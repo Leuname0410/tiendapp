@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class product extends Model
 {
     protected $primaryKey = 'id';
-
+    protected $dates = ['created_at', 'updated_at', 'deleted_at'];
     protected $fillable = [
         'brand_id',
         'product_name',
@@ -15,7 +16,9 @@ class product extends Model
         'inventory_quantity',
         'shipment_date',
         'observations',
-        ];
+    ];
+
+    use SoftDeletes;
 
     /**
     * Get brand of product

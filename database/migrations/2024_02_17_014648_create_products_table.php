@@ -18,13 +18,14 @@ class CreateProductsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('brand_id');
             $table->string('product_name', 30)->nullable(false);
-            $table->enum('size', ['s', 'm', 'l'])->nullable(false);
+            $table->enum('size', ['S', 'M', 'L'])->nullable(false);
             $table->integer('inventory_quantity')->nullable(false);
             $table->date('shipment_date')->nullable(false);
             $table->text('observations')->nullable(false);
+            $table->softDeletes();
             $table->timestamps();
 
-            $table->foreign('brand_id')->references('brand_id')->on('brands');
+            $table->foreign('brand_id')->references('brand_id')->on('brands')->onDelete('cascade');
 
         });
     }

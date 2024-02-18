@@ -70,7 +70,7 @@ class ProductSeeder extends Seeder
      */
     private function getRandomSize()
     {
-        $sizes = ['s', 'm', 'l'];
+        $sizes = ['S', 'M', 'L'];
         return $sizes[array_rand($sizes)];
     }
 }
