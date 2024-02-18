@@ -28,7 +28,6 @@
         .btn {
             padding: 5px 10px;
             border: none;
-            background-color: #4caf50;
             color: white;
             cursor: pointer;
             border-radius: 5px;
@@ -44,7 +43,10 @@
 
         .btn-create {
             background-color: #ff9800;
-            margin-bottom: 2rem
+        }
+
+        .create_products {
+            margin-right: 1rem
         }
     </style>
 </head>
@@ -66,6 +68,8 @@
                     {{-- <td>{{ $brand->id }}</td> --}}
                     <td>{{ $brand->name }}</td>
                     <td>
+                        <a class="btn btn-create create_products"
+                            href="{{ route('products.index', $brand->id) }}">Products</a>
                         <a href="{{ route('brands.edit', $brand) }}" class="btn btn-edit">Edit</a>
                         <button class="btn btn-delete"
                             onclick="deleteBrand('{{ route('brands.destroy', $brand) }}', '{{ $brand->name }}', '{{ $brand->id }}')">Delete</button>
@@ -77,7 +81,7 @@
 
     <script>
         function deleteBrand(url, brandName, brandId) {
-            if (confirm('Are you sure you want to delete ' + brandName + ' brand?')) {
+            if (confirm('Are you sure you want to delete (' + brandName + ') brand?')) {
                 fetch(url, {
                     method: 'DELETE',
                     headers: {

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,3 +26,11 @@ Route::post('/brands', [BrandController::class, 'store'])->name('brands.store');
 Route::get('/brands/{brand}/edit', [BrandController::class, 'edit'])->name('brands.edit');
 Route::put('/brands/{brand}', [BrandController::class, 'update'])->name('brands.update');
 Route::delete('/brands/delete/{brand}', [BrandController::class, 'destroy'])->name('brands.destroy');
+
+// Product routes --------------------------------
+Route::get('/Products/{brand}', [ProductController::class, 'index'])->name('products.index');
+Route::get('/Product/{brand}/create', [ProductController::class, 'create'])->name('product.create');
+Route::post('/Product', [ProductController::class, 'store'])->name('product.store');
+Route::get('/Product/{product}/edit', [ProductController::class, 'edit'])->name('product.edit');
+Route::put('/Product/{product}', [ProductController::class, 'update'])->name('product.update');
+Route::delete('/Product/delete/{product}', [ProductController::class, 'destroy'])->name('product.destroy');
