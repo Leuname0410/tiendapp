@@ -8,6 +8,20 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+
+    private function validateBrand($id)
+    {
+
+        $products = product::where('brand_id', $id)->get();
+
+        if ($products->isEmpty()) {
+
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -17,8 +31,28 @@ class ProductController extends Controller
     {
 
         $products = product::where('brand_id', $brand->id)->get();
-        return view('products.index', compact('products','brand'));
+        return view('products.index', compact('products', 'brand'));
+    }
 
+    public function indexApi(Request $request)
+    {
+
+        $data = $request->all();
+
+        if (isset($data[0]['id'])) {
+
+            $products = $this->validateBrand($data[0]['id']);
+
+            if ($products) {
+
+                return response()->json($products);
+            }
+
+            return response()->json(['message' => 'Brand not found']);
+        } else {
+
+            return response()->json(['message' => 'Brand not received']);
+        }
     }
 
     /**
@@ -49,6 +83,48 @@ class ProductController extends Controller
 
         $product->save();
         return redirect()->route('products.index', $request->brand_id)->with('success', 'Product created successfully.');
+    }
+
+    public function storeApi(Request $request)
+    {
+        $data = $request->all();
+
+        if (
+            isset($data[0]['brand_id']) &&
+            isset($data[0]['product_name']) &&
+            isset($data[0]['size']) &&
+            isset($data[0]['inventory_quantity']) &&
+            isset($data[0]['shipment_date']) &&
+            isset($data[0]['observations'])
+        ) {
+
+            $brandExists = $this->validateBrand($data[0]['brand_id']);
+
+            if ($brandExists) {
+
+                $product = Product::create([
+                    'brand_id' => $data[0]['brand_id'],
+                    'product_name' => $data[0]['product_name'],
+                    'size' => $data[0]['size'],
+                    'inventory_quantity' => $data[0]['inventory_quantity'],
+                    'shipment_date' => $data[0]['shipment_date'],
+                    'observations' => $data[0]['observations']
+                ]);
+
+                if ($product) {
+
+                    return response()->json(['message' => 'Brand created successfully']);
+                } else {
+
+                    return response()->json(['message' => 'Failed to create brand']);
+                }
+            } else {
+
+                return response()->json(['message' => 'Brand not found']);
+            }
+        } else {
+            return response()->json(['message' => 'Data not received']);
+        }
     }
 
     /**
@@ -96,6 +172,51 @@ class ProductController extends Controller
         return redirect()->route('products.index', $product->brand_id)->with('success', 'Product updated successfully.');
     }
 
+    public function updateApi(Request $request)
+    {
+        $data = $request->all();
+
+        if (
+            isset($data[0]['id']) &&
+            isset($data[0]['brand_id']) &&
+            isset($data[0]['product_name']) &&
+            isset($data[0]['size']) &&
+            isset($data[0]['inventory_quantity']) &&
+            isset($data[0]['shipment_date']) &&
+            isset($data[0]['observations'])
+        ) {
+
+            $brandExists = $this->validateBrand($data[0]['brand_id']);
+
+            $product = Product::find($data[0]['id']);
+
+            if ($brandExists && $product) {
+
+                $product->product_name = $data[0]['product_name'];
+                $product->size = $data[0]['size'];
+                $product->inventory_quantity = $data[0]['inventory_quantity'];
+                $product->shipment_date = $data[0]['shipment_date'];
+                $product->observations = $data[0]['observations'];
+
+                $product->save();
+
+                if ($product->wasChanged()) {
+
+                    return response()->json(['message' => 'Brand updated successfully'], 200);
+                } else {
+
+                    return response()->json(['message' => 'Brand data remains unchanged'], 200);
+                }
+            } else {
+
+                return response()->json(['message' => 'Product not found']);
+            }
+        } else {
+            return response()->json(['message' => 'Data not received']);
+        }
+    }
+
+
     /**
      * Remove the specified resource from storage.
      *
@@ -107,11 +228,47 @@ class ProductController extends Controller
         $product = Product::find($product->id);
 
 
-        if(!$product->delete())
-        {
+        if (!$product->delete()) {
             return false;
         }
 
         return true;
+    }
+
+    public function destroyApi(Request $request)
+    {
+        $data = $request->all();
+
+        if (isset($data[0]['id']) && $data[0]['brand_id']) {
+
+            $brandExists = $this->validateBrand($data[0]['brand_id']);
+
+            $product = Product::find($data[0]['id']);
+
+
+            if ($brandExists && $product) {
+
+                $deleted = $product->delete();
+
+                if ($deleted) {
+
+                    $productExists = Brand::find($data[0]['id']);
+
+                    if (!$productExists) {
+
+                        return response()->json(['message' => 'Product deleted successfully']);
+                    } else {
+
+                        return response()->json(['message' => 'Product deletion failed']);
+                    }
+                } else {
+                    return response()->json(['message' => 'Failed to delete product']);
+                }
+            } else {
+                return response()->json(['message' => 'Product not found']);
+            }
+        } else {
+            return response()->json(['message' => 'Data not received']);
+        }
     }
 }

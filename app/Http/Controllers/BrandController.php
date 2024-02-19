@@ -16,7 +16,12 @@ class BrandController extends Controller
     {
         $brands = Brand::all()->sortBy('id');
         return view('brands.index', compact('brands'));
+    }
 
+    public function indexApi()
+    {
+        $brands = Brand::all()->sortBy('id');
+        return response()->json($brands);
     }
 
     /**
@@ -46,16 +51,27 @@ class BrandController extends Controller
         return redirect()->route('brands.index')->with('success', 'Brand created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\brand  $brand
-     * @return \Illuminate\Http\Response
-     */
-    public function show(brand $brand)
+    public function storeApi(Request $request)
     {
-        //
+        $data = $request->all();
+
+        if (isset($data[0]['name'])) {
+
+            $brand = Brand::create(['name' => $data[0]['name']]);
+
+            if ($brand) {
+
+                return response()->json(['message' => 'Brand created successfully']);
+            } else {
+
+                return response()->json(['message' => 'Failed to create brand']);
+            }
+        } else {
+
+            return response()->json(['message' => 'Name not received']);
+        }
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -86,6 +102,34 @@ class BrandController extends Controller
         return redirect()->route('brands.index')->with('success', 'Brand updated successfully.');
     }
 
+    public function updateApi(Request $request)
+    {
+
+        $data = $request->all();
+
+        if (isset($data[0]['name']) && isset($data[0]['id'])) {
+
+            $brand = Brand::find($data[0]['id']);
+
+            if ($brand) {
+
+                $brand->name = $data[0]['name'];
+                $brand->save();
+
+                if ($brand->wasChanged()) {
+                    return response()->json(['message' => 'Brand updated successfully']);
+                } else {
+                    return response()->json(['message' => 'Brand data remains unchanged']);
+                }
+            } else {
+                return response()->json(['message' => 'Brand not found']);
+            }
+        } else {
+
+            return response()->json(['message' => 'Data not received']);
+        }
+    }
+
     /**
      * Remove the specified resource from storage.
      *
@@ -94,13 +138,44 @@ class BrandController extends Controller
      */
     public function destroy(brand $brand)
     {
-
-
-        if(!$brand->delete())
-        {
+        if (!$brand->delete()) {
             return false;
         }
 
         return true;
+    }
+
+    public function destroyApi(Request $request)
+    {
+        $data = $request->all();
+
+        if (isset($data[0]['id'])) {
+
+            $id = $data[0]['id'];
+
+            $brand = Brand::find($id);
+
+            if ($brand) {
+
+                $deleted = $brand->delete();
+
+                if ($deleted) {
+
+                    $brandExists = Brand::find($id);
+
+                    if (!$brandExists) {
+                        return response()->json(['message' => 'Brand deleted successfully']);
+                    } else {
+                        return response()->json(['message' => 'Brand deletion failed']);
+                    }
+                } else {
+                    return response()->json(['message' => 'Failed to delete brand']);
+                }
+            } else {
+                return response()->json(['message' => 'Brand not found']);
+            }
+        } else {
+            return response()->json(['message' => 'ID not received']);
+        }
     }
 }
