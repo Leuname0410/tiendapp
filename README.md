@@ -21,11 +21,43 @@ y en el httpd.conf del servidor agregar este codigo
         Header set Access-Control-Allow-Origin: *
     </IfModule>
 
+Instalar el paquete fruitcake
+
+-   composer require fruitcake/laravel-cors
+
 Comentar las lineas del archivo Kernel.php
 
 -   // \App\Http\Middleware\VerifyCsrfToken::class
 
-Y reiniciar el servidor
+y agregar
+
+-   \Fruitcake\Cors\HandleCors::class,
+
+Ejecutar
+
+-   php artisan vendor:publish --tag="cors"
+
+Modificar el archivo cors.php ubicado en: vendor/fruitcake/laravel-cors/conig
+
+    'paths' => ['api/*'],
+
+    'allowed_methods' => ['*'],
+
+    'allowed_origins' => ['http://localhost:3000'],
+
+    'allowed_origins_patterns' => [],
+
+    'allowed_headers' => ['*'],
+
+    'exposed_headers' => [],
+
+    'max_age' => 0,
+
+    'supports_credentials' => false,
+
+Limpiar cache
+
+-   php artisan config:cache
 
 Y ejecutar las migraciones con los seeders
 

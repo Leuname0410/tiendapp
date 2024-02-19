@@ -61,14 +61,14 @@ class BrandController extends Controller
 
             if ($brand) {
 
-                return response()->json(['message' => 'Brand created successfully']);
+                return response()->json(['status' => false, 'message' => 'Brand created successfully']);
             } else {
 
-                return response()->json(['message' => 'Failed to create brand']);
+                return response()->json(['status' => false, 'message' => 'Failed to create brand']);
             }
         } else {
 
-            return response()->json(['message' => 'Name not received']);
+            return response()->json(['status' => false, 'message' => 'Name not received']);
         }
     }
 
@@ -117,16 +117,16 @@ class BrandController extends Controller
                 $brand->save();
 
                 if ($brand->wasChanged()) {
-                    return response()->json(['message' => 'Brand updated successfully']);
+                    return response()->json(['status' => true, 'message' => 'Brand updated successfully']);
                 } else {
-                    return response()->json(['message' => 'Brand data remains unchanged']);
+                    return response()->json(['status' => false, 'message' => 'Brand data remains unchanged']);
                 }
             } else {
-                return response()->json(['message' => 'Brand not found']);
+                return response()->json(['status' => false, 'message' => 'Brand not found']);
             }
         } else {
 
-            return response()->json(['message' => 'Data not received']);
+            return response()->json(['status' => false, 'message' => 'Data not received']);
         }
     }
 
@@ -151,9 +151,7 @@ class BrandController extends Controller
 
         if (isset($data[0]['id'])) {
 
-            $id = $data[0]['id'];
-
-            $brand = Brand::find($id);
+            $brand = Brand::find($data[0]['id']);
 
             if ($brand) {
 
@@ -161,21 +159,21 @@ class BrandController extends Controller
 
                 if ($deleted) {
 
-                    $brandExists = Brand::find($id);
+                    $brandExists = Brand::find($data[0]['id']);
 
                     if (!$brandExists) {
-                        return response()->json(['message' => 'Brand deleted successfully']);
+                        return response()->json(['status' => true, 'message' => 'Brand deleted successfully']);
                     } else {
-                        return response()->json(['message' => 'Brand deletion failed']);
+                        return response()->json(['status' => false, 'message' => 'Brand deletion failed']);
                     }
                 } else {
-                    return response()->json(['message' => 'Failed to delete brand']);
+                    return response()->json(['status' => false, 'message' => 'Failed to delete brand']);
                 }
             } else {
-                return response()->json(['message' => 'Brand not found']);
+                return response()->json(['status' => false, 'message' => 'Brand not found']);
             }
         } else {
-            return response()->json(['message' => 'ID not received']);
+            return response()->json(['status' => false, 'message' => 'ID not received']);
         }
     }
 }

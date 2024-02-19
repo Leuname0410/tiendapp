@@ -48,10 +48,10 @@ class ProductController extends Controller
                 return response()->json($products);
             }
 
-            return response()->json(['message' => 'Brand not found']);
+            return response()->json(['status' => false, 'message' => 'Brand not found']);
         } else {
 
-            return response()->json(['message' => 'Brand not received']);
+            return response()->json(['status' => false, 'message' => 'Brand not received']);
         }
     }
 
@@ -113,17 +113,17 @@ class ProductController extends Controller
 
                 if ($product) {
 
-                    return response()->json(['message' => 'Brand created successfully']);
+                    return response()->json(['status' => true, 'message' => 'Brand created successfully']);
                 } else {
 
-                    return response()->json(['message' => 'Failed to create brand']);
+                    return response()->json(['status' => false, 'message' => 'Failed to create brand']);
                 }
             } else {
 
-                return response()->json(['message' => 'Brand not found']);
+                return response()->json(['status' => false, 'message' => 'Brand not found']);
             }
         } else {
-            return response()->json(['message' => 'Data not received']);
+            return response()->json(['status' => false, 'message' => 'Data not received']);
         }
     }
 
@@ -202,17 +202,17 @@ class ProductController extends Controller
 
                 if ($product->wasChanged()) {
 
-                    return response()->json(['message' => 'Brand updated successfully'], 200);
+                    return response()->json(['status' => true, 'message' => 'Brand updated successfully'], 200);
                 } else {
 
-                    return response()->json(['message' => 'Brand data remains unchanged'], 200);
+                    return response()->json(['status' => false, 'message' => 'Brand data remains unchanged'], 200);
                 }
             } else {
 
-                return response()->json(['message' => 'Product not found']);
+                return response()->json(['status' => false, 'message' => 'Product not found']);
             }
         } else {
-            return response()->json(['message' => 'Data not received']);
+            return response()->json(['status' => false, 'message' => 'Data not received']);
         }
     }
 
@@ -256,19 +256,19 @@ class ProductController extends Controller
 
                     if (!$productExists) {
 
-                        return response()->json(['message' => 'Product deleted successfully']);
+                        return response()->json(['status' => true, 'message' => 'Product deleted successfully']);
                     } else {
 
-                        return response()->json(['message' => 'Product deletion failed']);
+                        return response()->json(['status' => false, 'message' => 'Product deletion failed']);
                     }
                 } else {
-                    return response()->json(['message' => 'Failed to delete product']);
+                    return response()->json(['status' => false, 'message' => 'Failed to delete product']);
                 }
             } else {
-                return response()->json(['message' => 'Product not found']);
+                return response()->json(['status' => false, 'message' => 'Product not found']);
             }
         } else {
-            return response()->json(['message' => 'Data not received']);
+            return response()->json(['status' => false, 'message' => 'Data not received']);
         }
     }
 }

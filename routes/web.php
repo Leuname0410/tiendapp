@@ -28,10 +28,10 @@ Route::put('/brands/{brand}', [BrandController::class, 'update'])->name('brands.
 Route::delete('/brands/delete/{brand}', [BrandController::class, 'destroy'])->name('brands.destroy');
 
 // Api routes --------------------------------
-Route::get('/brandsApi', [BrandController::class, 'indexApi']);
-Route::post('/storeBrand', [BrandController::class, 'storeApi']);
-Route::put('/EditBrand', [BrandController::class, 'updateApi']);
-Route::delete('/DeleteBrand', [BrandController::class, 'destroyApi']);
+Route::get('/api/brandsApi', [BrandController::class, 'indexApi']);
+Route::post('/api/storeBrand', [BrandController::class, 'storeApi']);
+Route::put('/api/editBrand', [BrandController::class, 'updateApi']);
+Route::delete('/api/deleteBrand', [BrandController::class, 'destroyApi']);
 
 // Product routes --------------------------------
 Route::get('/Products/{brand}', [ProductController::class, 'index'])->name('products.index');
@@ -42,7 +42,7 @@ Route::put('/Product/{product}', [ProductController::class, 'update'])->name('pr
 Route::delete('/Product/delete/{product}', [ProductController::class, 'destroy'])->name('product.destroy');
 
 // Api routes --------------------------------
-Route::get('/productsApi', [ProductController::class, 'indexApi']);
-Route::post('/storeProduct', [ProductController::class, 'storeApi']);
-Route::put('/EditProduct', [ProductController::class, 'updateApi']);
-Route::delete('/DeleteProduct', [ProductController::class, 'destroyApi']);
+Route::get('api/productsApi', [ProductController::class, 'indexApi']);
+Route::post('api/storeProduct', [ProductController::class, 'storeApi']);
+Route::put('api/EditProduct', [ProductController::class, 'updateApi']);
+Route::delete('api/DeleteProduct', [ProductController::class, 'destroyApi']);
