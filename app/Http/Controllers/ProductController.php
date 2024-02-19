@@ -41,10 +41,11 @@ class ProductController extends Controller
 
         if (isset($data[0]['id'])) {
 
-            $products = $this->validateBrand($data[0]['id']);
+            $validateBrand = $this->validateBrand($data[0]['id']);
 
-            if ($products) {
+            if ($validateBrand) {
 
+                $products = product::where('brand_id', $data[0]['id'])->get();
                 return response()->json($products);
             }
 
@@ -98,32 +99,44 @@ class ProductController extends Controller
             isset($data[0]['observations'])
         ) {
 
-            $brandExists = $this->validateBrand($data[0]['brand_id']);
+            if (
+                is_string($data[0]['product_name']) &&
+                strlen($data[0]['product_name']) <= 30 &&
+                in_array($data[0]['size'], ["S", "M", "L"]) &&
+                intval($data[0]['inventory_quantity']) > 0 &&
+                strtotime($data[0]['shipment_date']) < time() &&
+                !empty($data[0]['observations'])
+            ) {
 
-            if ($brandExists) {
+                $brandExists = $this->validateBrand($data[0]['brand_id']);
 
-                $product = Product::create([
-                    'brand_id' => $data[0]['brand_id'],
-                    'product_name' => $data[0]['product_name'],
-                    'size' => $data[0]['size'],
-                    'inventory_quantity' => $data[0]['inventory_quantity'],
-                    'shipment_date' => $data[0]['shipment_date'],
-                    'observations' => $data[0]['observations']
-                ]);
+                if ($brandExists) {
 
-                if ($product) {
+                    $product = Product::create([
+                        'brand_id' => $data[0]['brand_id'],
+                        'product_name' => $data[0]['product_name'],
+                        'size' => $data[0]['size'],
+                        'inventory_quantity' => $data[0]['inventory_quantity'],
+                        'shipment_date' => $data[0]['shipment_date'],
+                        'observations' => $data[0]['observations']
+                    ]);
 
-                    return response()->json(['status' => true, 'message' => 'Brand created successfully']);
+                    if ($product) {
+
+                        return response()->json(['status' => true, 'message' => 'Brand created successfully'], 200);
+                    } else {
+
+                        return response()->json(['status' => false, 'message' => 'Failed to create brand'], 422);
+                    }
                 } else {
 
-                    return response()->json(['status' => false, 'message' => 'Failed to create brand']);
+                    return response()->json(['status' => false, 'message' => 'Brand not found'], 422);
                 }
             } else {
-
-                return response()->json(['status' => false, 'message' => 'Brand not found']);
+                return response()->json(['status' => false, 'message' => 'Data incorrect'], 422);
             }
         } else {
-            return response()->json(['status' => false, 'message' => 'Data not received']);
+            return response()->json(['status' => false, 'message' => 'Data not received'], 422);
         }
     }
 
@@ -177,42 +190,53 @@ class ProductController extends Controller
         $data = $request->all();
 
         if (
-            isset($data[0]['id']) &&
-            isset($data[0]['brand_id']) &&
-            isset($data[0]['product_name']) &&
-            isset($data[0]['size']) &&
-            isset($data[0]['inventory_quantity']) &&
-            isset($data[0]['shipment_date']) &&
-            isset($data[0]['observations'])
+            isset($data['brand_id']) &&
+            isset($data['id']) &&
+            isset($data['product_name']) &&
+            isset($data['size']) &&
+            isset($data['inventory_quantity']) &&
+            isset($data['shipment_date']) &&
+            isset($data['observations'])
         ) {
 
-            $brandExists = $this->validateBrand($data[0]['brand_id']);
+            if (
+                is_string($data['product_name']) &&
+                strlen($data['product_name']) <= 30 &&
+                in_array($data['size'], ["S", "M", "L"]) &&
+                intval($data['inventory_quantity']) > 0 &&
+                strtotime($data['shipment_date']) < time() &&
+                !empty($data['observations'])
+            ) {
+                $brandExists = $this->validateBrand($data['brand_id']);
 
-            $product = Product::find($data[0]['id']);
+                $product = Product::find($data['id']);
 
-            if ($brandExists && $product) {
+                if ($brandExists && $product) {
 
-                $product->product_name = $data[0]['product_name'];
-                $product->size = $data[0]['size'];
-                $product->inventory_quantity = $data[0]['inventory_quantity'];
-                $product->shipment_date = $data[0]['shipment_date'];
-                $product->observations = $data[0]['observations'];
+                    $product->product_name = $data['product_name'];
+                    $product->size = $data['size'];
+                    $product->inventory_quantity = $data['inventory_quantity'];
+                    $product->shipment_date = $data['shipment_date'];
+                    $product->observations = $data['observations'];
 
-                $product->save();
+                    $product->save();
 
-                if ($product->wasChanged()) {
+                    if ($product->wasChanged()) {
 
-                    return response()->json(['status' => true, 'message' => 'Brand updated successfully'], 200);
+                        return response()->json(['status' => true, 'message' => 'Brand updated successfully'], 200);
+                    } else {
+
+                        return response()->json(['status' => false, 'message' => 'Brand data remains unchanged'], 422);
+                    }
                 } else {
 
-                    return response()->json(['status' => false, 'message' => 'Brand data remains unchanged'], 200);
+                    return response()->json(['status' => false, 'message' => 'Product not found'], 422);
                 }
             } else {
-
-                return response()->json(['status' => false, 'message' => 'Product not found']);
+                return response()->json(['status' => false, 'message' => 'Data incorrect'], 422);
             }
         } else {
-            return response()->json(['status' => false, 'message' => 'Data not received']);
+            return response()->json(['status' => false, 'message' => 'Data not received'], 422);
         }
     }
 

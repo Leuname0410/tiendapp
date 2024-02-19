@@ -42,7 +42,7 @@ Route::put('/Product/{product}', [ProductController::class, 'update'])->name('pr
 Route::delete('/Product/delete/{product}', [ProductController::class, 'destroy'])->name('product.destroy');
 
 // Api routes --------------------------------
-Route::get('api/productsApi', [ProductController::class, 'indexApi']);
+Route::post('api/productsApi', [ProductController::class, 'indexApi']);
 Route::post('api/storeProduct', [ProductController::class, 'storeApi']);
-Route::put('api/EditProduct', [ProductController::class, 'updateApi']);
-Route::delete('api/DeleteProduct', [ProductController::class, 'destroyApi']);
+Route::put('api/editProduct', [ProductController::class, 'updateApi']);
+Route::delete('api/deleteProduct', [ProductController::class, 'destroyApi']);
